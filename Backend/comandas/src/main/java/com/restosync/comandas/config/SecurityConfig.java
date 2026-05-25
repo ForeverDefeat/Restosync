@@ -156,8 +156,7 @@ public class SecurityConfig {
                 // Orígenes permitidos: frontend en dev y prod
                 config.setAllowedOrigins(List.of(
                                 "http://localhost:5173", // Vite dev server
-                                "http://localhost:4173", // Vite preview
-                                "http://localhost:3000" // alternativa CRA/Next
+                                "http://localhost:4173" // Vite preview
                 ));
 
                 config.setAllowedMethods(List.of(

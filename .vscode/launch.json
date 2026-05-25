@@ -1,0 +1,14 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Spring Boot-ComandasApplication<comandas>",
+            "request": "launch",
+            "cwd": "${workspaceFolder}",
+            "mainClass": "com.restosync.comandas.ComandasApplication",
+            "projectName": "comandas",
+            "args": "",
+            "envFile": "${workspaceFolder}/.env"
+        }
+    ]
+}
