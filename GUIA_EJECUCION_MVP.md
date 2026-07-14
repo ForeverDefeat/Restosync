@@ -94,6 +94,14 @@ Abre MySQL y crea la base de datos esperada por el backend:
 CREATE DATABASE restosync_db
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'restosync_app'@'localhost'
+    IDENTIFIED BY 'COLOCA_AQUI_UNA_NUEVA_CLAVE_SEGURA';
+
+GRANT ALL PRIVILEGES ON restosync_db.*
+    TO 'restosync_app'@'localhost';
+
+FLUSH PRIVILEGES;
 ```
 
 Luego revisa este archivo:
@@ -106,8 +114,8 @@ Configura tus credenciales locales de MySQL:
 
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/restosync_db?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true&characterEncoding=UTF-8
-spring.datasource.username=root
-spring.datasource.password=TU_PASSWORD_LOCAL
+spring.datasource.username=${SPRING_DATASOURCE_USERNAME:restosync_app}
+spring.datasource.password=${SPRING_DATASOURCE_PASSWORD:COLOCA_AQUI_UNA_NUEVA_CLAVE_SEGURA}
 ```
 
 Nota: el proyecto actualmente trae una clave local en `application.properties`. Para correrlo en otra maquina, cambia ese valor por la clave real de tu MySQL.
@@ -183,6 +191,14 @@ DROP DATABASE restosync_db;
 CREATE DATABASE restosync_db
   CHARACTER SET utf8mb4
   COLLATE utf8mb4_unicode_ci;
+
+CREATE USER IF NOT EXISTS 'restosync_app'@'localhost'
+    IDENTIFIED BY 'COLOCA_AQUI_UNA_NUEVA_CLAVE_SEGURA';
+
+GRANT ALL PRIVILEGES ON restosync_db.*
+    TO 'restosync_app'@'localhost';
+
+FLUSH PRIVILEGES;
 ```
 
 Despues vuelve a levantar el backend.
