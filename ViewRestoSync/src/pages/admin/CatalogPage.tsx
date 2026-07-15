@@ -1,5 +1,5 @@
 /** Gestion administrativa de catalogo, disponibilidad y formulario de producto. */
-import { Plus, ToggleLeft, ToggleRight } from 'lucide-react'
+import { ImageOff, Plus, ToggleLeft, ToggleRight } from 'lucide-react'
 import { useState } from 'react'
 import { getProductImage } from '../../assets/productImages'
 import { PageLayout } from '../../components/layout/PageLayout'
@@ -54,7 +54,7 @@ export default function CatalogPage() {
       </section>
 
       {productsQuery.isLoading && (
-        <div className="product-grid">
+        <div className="product-grid catalog-grid">
           <SkeletonCard />
           <SkeletonCard />
           <SkeletonCard />
@@ -63,24 +63,32 @@ export default function CatalogPage() {
       {productsQuery.isError && <EmptyState title="No se pudo cargar el catalogo" />}
       {productsQuery.data?.length === 0 && <EmptyState title="No hay productos registrados" />}
       {productsQuery.data && productsQuery.data.length > 0 && (
-        <div className="product-grid">
+        <div className="product-grid catalog-grid">
           {productsQuery.data.map((product) => {
             const productImage = getProductImage(product)
 
             return (
-              <article className={`product-card ${product.available ? '' : 'is-unavailable'}`} key={product.id}>
-                {productImage && <img alt="" src={productImage} />}
+              <article className={`product-card catalog-product-card ${product.available ? '' : 'is-unavailable'}`} key={product.id}>
+                <div className="catalog-product-media">
+                  {productImage ? (
+                    <img alt="" src={productImage} />
+                  ) : (
+                    <span aria-hidden="true" className="catalog-product-placeholder">
+                      <ImageOff size={22} />
+                    </span>
+                  )}
+                </div>
                 <span className={`availability-badge ${product.available ? 'is-available' : 'is-unavailable'}`}>
                   {product.available ? 'Disponible' : 'No disponible'}
                 </span>
-                <div>
+                <div className="catalog-product-details">
                   <span>{product.category}</span>
                   <h2>{product.name}</h2>
                   <p>
                     {formatMoney(product.price)} - {product.estimatedMinutes} min
                   </p>
                 </div>
-                <footer>
+                <footer className="catalog-product-actions">
                   <button className="secondary-button" onClick={() => { setEditing(product); setModalOpen(true) }} type="button">
                     Editar
                   </button>

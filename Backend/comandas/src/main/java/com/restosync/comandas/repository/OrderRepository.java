@@ -89,6 +89,17 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
     boolean existsByTicketNumber(String ticketNumber);
  
     List<Order> findAllByStatusOrderByCreatedAtAsc(OrderStatus status);
+
+    List<Order> findAllByCreatedAtGreaterThanEqualAndCreatedAtLessThanOrderByCreatedAtAsc(
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
+
+    List<Order> findAllByStatusAndUpdatedAtGreaterThanEqualAndUpdatedAtLessThanOrderByUpdatedAtAsc(
+            OrderStatus status,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
  
     @Query("""
             SELECT COUNT(o) FROM Order o

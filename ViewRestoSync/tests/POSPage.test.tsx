@@ -9,6 +9,36 @@ import { waiterUser } from './testServer'
 import { renderWithProviders } from './renderWithProviders'
 
 describe('POSPage', () => {
+  it('muestra los datos del producto, filtra y permite vaciar el carrito', async () => {
+    const user = userEvent.setup()
+    useAuthStore.getState().setSession(waiterUser, 'waiter-token', 3600)
+
+    renderWithProviders(
+      <MemoryRouter>
+        <POSPage />
+      </MemoryRouter>,
+    )
+
+    expect(await screen.findByRole('heading', { name: 'Lomo saltado' })).toBeInTheDocument()
+    expect(screen.getByText('PLATO')).toBeInTheDocument()
+    expect(screen.getByText('15 min')).toBeInTheDocument()
+    expect(screen.getByText('S/ 32.00')).toBeInTheDocument()
+
+    const beveragesFilter = screen.getByRole('button', { name: 'Bebidas' })
+    await user.click(beveragesFilter)
+    expect(beveragesFilter).toHaveClass('is-active')
+
+    const search = screen.getByPlaceholderText('Buscar producto')
+    await user.type(search, 'Lomo')
+    expect(search).toHaveValue('Lomo')
+
+    await user.click(screen.getAllByLabelText('Agregar producto')[0])
+    expect(screen.queryByText('Carrito vacio')).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: /vaciar/i }))
+    expect(screen.getByText('Carrito vacio')).toBeInTheDocument()
+  })
+
   it('permite agregar productos mockeados y enviar comanda', async () => {
     const user = userEvent.setup()
     useAuthStore.getState().setSession(waiterUser, 'waiter-token', 3600)

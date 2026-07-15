@@ -1,5 +1,5 @@
 /** POS del mesero: catalogo, carrito y creacion de comandas. */
-import { Minus, Plus, Send, Trash2, X } from 'lucide-react'
+import { ImageOff, Minus, Plus, Send, Trash2, X } from 'lucide-react'
 import { useMemo, useState } from 'react'
 import { getProductImage } from '../../assets/productImages'
 import { PageLayout } from '../../components/layout/PageLayout'
@@ -90,8 +90,8 @@ export default function POSPage() {
       </section>
 
       <div className="pos-grid">
-        <section className="work-panel">
-          <div className="toolbar">
+        <section className="work-panel pos-catalog-panel">
+          <div className="toolbar pos-toolbar">
             <input
               onChange={(event) => setSearch(event.target.value)}
               placeholder="Buscar producto"
@@ -125,14 +125,22 @@ export default function POSPage() {
                 const productImage = getProductImage(product)
 
                 return (
-                  <article className="product-card" key={product.id}>
-                    {productImage && <img alt="" src={productImage} />}
-                    <div>
-                      <span>{product.category}</span>
-                      <h2>{product.name}</h2>
-                      <p>{product.estimatedMinutes} min</p>
+                  <article className="product-card pos-product-card" key={product.id}>
+                    <div className="pos-product-media">
+                      {productImage ? (
+                        <img alt="" src={productImage} />
+                      ) : (
+                        <span aria-hidden="true" className="pos-product-placeholder">
+                          <ImageOff size={22} />
+                        </span>
+                      )}
                     </div>
-                    <footer>
+                    <div className="pos-product-details">
+                      <span className="pos-product-category">{product.category}</span>
+                      <h2>{product.name}</h2>
+                      <p className="pos-product-time">{product.estimatedMinutes} min</p>
+                    </div>
+                    <footer className="pos-product-actions">
                       <strong>{formatMoney(product.price)}</strong>
                       <button aria-label="Agregar producto" className="icon-button" onClick={() => addProduct(product)} type="button">
                         <Plus aria-hidden="true" size={18} />

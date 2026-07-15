@@ -5,6 +5,9 @@ import type { OrderHistoryParams, ProductFilters } from '../types/api'
  * Define claves estables de React Query para centralizar cache e invalidaciones por dominio.
  */
 export const queryKeys = {
+  dashboard: {
+    today: () => ['dashboard', 'today'] as const,
+  },
   orders: {
     all: ['orders'] as const,
     mine: () => [...queryKeys.orders.all, 'mine'] as const,

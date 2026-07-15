@@ -70,6 +70,44 @@ export const activeOrder: Order = {
   updatedAt: '2026-01-01T00:00:00Z',
 }
 
+export const dashboardSummary = {
+  businessDate: '2026-07-14',
+  timezone: 'America/Lima' as const,
+  generatedAt: '2026-07-14T15:00:00Z',
+  kpis: {
+    netSales: 76,
+    totalOrders: 4,
+    averageTicket: 38,
+    cancelledOrders: 1,
+    cancellationRate: 25,
+    activeOrders: 2,
+    averageServiceMinutes: 18,
+  },
+  hourlySales: Array.from({ length: 24 }, (_, hour) => ({
+    hour,
+    sales: hour === 13 ? 76 : 0,
+    orders: hour === 13 ? 2 : 0,
+  })),
+  statusBreakdown: [
+    { status: 'PENDIENTE' as const, count: 1 },
+    { status: 'EN_PREPARACION' as const, count: 1 },
+    { status: 'LISTO' as const, count: 0 },
+    { status: 'ENTREGADO' as const, count: 1 },
+    { status: 'CANCELADO' as const, count: 1 },
+  ],
+  recentActivity: [
+    {
+      id: 1,
+      action: 'ORDER_STATUS_CHANGED',
+      userId: 1,
+      userName: 'Admin Test',
+      orderId: 100,
+      details: { from: 'PENDIENTE', to: 'EN_PREPARACION' },
+      createdAt: '2026-07-14T14:30:00',
+    },
+  ],
+}
+
 const ok = <T>(data: T) =>
   HttpResponse.json({
     success: true,
@@ -98,6 +136,7 @@ export const handlers = [
     return ok(auth)
   }),
   http.get('http://localhost:8080/api/products', () => ok([plateProduct, drinkProduct])),
+  http.get('http://localhost:8080/api/admin/dashboard/today', () => ok(dashboardSummary)),
   http.post('http://localhost:8080/api/orders', () => ok({ ...activeOrder, id: 101 })),
   http.get('http://localhost:8080/api/orders/my', () => ok([activeOrder])),
   http.get('http://localhost:8080/api/orders/active/cocina', () => ok([activeOrder])),

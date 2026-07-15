@@ -1,6 +1,6 @@
 package com.restosync.comandas.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.ObjectMapper;
 import com.restosync.comandas.IntegrationTestSupport;
 import com.restosync.comandas.TestDataFactory;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 /** Contratos genericos para respuestas HTTP, paginacion y errores de la API. */
 import type { OrderStatus, ProductCategory, UserRole } from './enums'
-import type { User } from './models'
+import type { AuditLog, User } from './models'
 
 /**
  * Envelope generico que el backend usa para respuestas exitosas o informativas.
@@ -142,4 +142,23 @@ export interface CreateUserRequest {
  */
 export interface UpdateUserRoleRequest {
   role: UserRole
+}
+
+/** Resumen ejecutivo de la jornada administrativa en la zona del negocio. */
+export interface DashboardSummary {
+  businessDate: string
+  timezone: 'America/Lima'
+  generatedAt: string
+  kpis: {
+    netSales: number
+    totalOrders: number
+    averageTicket: number
+    cancelledOrders: number
+    cancellationRate: number
+    activeOrders: number
+    averageServiceMinutes: number
+  }
+  hourlySales: Array<{ hour: number; sales: number; orders: number }>
+  statusBreakdown: Array<{ status: OrderStatus; count: number }>
+  recentActivity: AuditLog[]
 }

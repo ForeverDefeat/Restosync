@@ -9,7 +9,7 @@ const credentials = {
 async function login(page: import('@playwright/test').Page, email: string, password: string) {
   await page.goto('/login')
   await page.getByLabel(/email/i).fill(email)
-  await page.getByLabel(/password/i).fill(password)
+  await page.locator('input[type="password"]').fill(password)
   await page.getByRole('button', { name: /iniciar sesion/i }).click()
 }
 

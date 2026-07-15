@@ -25,5 +25,10 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
             Long userId,
             String action
     );
+
+    List<AuditLog> findTop8ByCreatedAtGreaterThanEqualAndCreatedAtLessThanAndActionNotOrderByCreatedAtDesc(
+            LocalDateTime from,
+            LocalDateTime to,
+            String excludedAction
+    );
 }
- 

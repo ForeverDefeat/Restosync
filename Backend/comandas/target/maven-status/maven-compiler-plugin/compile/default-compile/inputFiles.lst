@@ -19,11 +19,15 @@ C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\controller\AuthController.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\security\SecurityUser.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\dto\request\CreateUserRequest.java
+C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\config\TimeConfig.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\entity\AuditLog.java
+C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\service\DashboardService.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\util\TextNormalizer.java
+C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\dto\response\DashboardSummaryResponse.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\dto\response\ProductResponse.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\dto\response\AuditLogResponse.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\dto\request\CreateProductRequest.java
+C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\controller\DashboardController.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\entity\Product.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\repository\UserRepository.java
 C:\Users\User\Desktop\MVP-RestoSync\Backend\comandas\src\main\java\com\restosync\comandas\dto\request\UpdateOrderStatusRequest.java
