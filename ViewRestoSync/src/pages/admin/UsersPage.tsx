@@ -1,10 +1,17 @@
 /** Gestion administrativa de empleados, filtros por rol y cambios de perfil. */
-import { Clock3, Fingerprint, Mail, Power, Search, UserPlus } from 'lucide-react'
+import { Clock3, Fingerprint, Mail, Pencil, Power, Search, UserPlus } from 'lucide-react'
 import { useMemo, useState, type FormEvent } from 'react'
 import { PageLayout } from '../../components/layout/PageLayout'
 import { EmptyState } from '../../components/ui/EmptyState'
 import { Modal } from '../../components/ui/Modal'
-import { useCreateUser, useGetUsers, useToggleActive, useUpdateRole } from '../../hooks/useUsers'
+import { getApiErrorMessage } from '../../api/axios'
+import {
+  useCreateUser,
+  useGetUsers,
+  useToggleActive,
+  useUpdateRole,
+  useUpdateUserCredentials,
+} from '../../hooks/useUsers'
 import { useNotificationStore } from '../../store/notificationStore'
 import type { UserRole } from '../../types/enums'
 import type { User } from '../../types/models'
@@ -63,9 +70,11 @@ export default function UsersPage() {
   const usersQuery = useGetUsers()
   const createUser = useCreateUser()
   const updateRole = useUpdateRole()
+  const updateCredentials = useUpdateUserCredentials()
   const toggleActive = useToggleActive()
   const notify = useNotificationStore((state) => state.add)
   const [modalOpen, setModalOpen] = useState(false)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
   const [search, setSearch] = useState('')
   const [roleFilter, setRoleFilter] = useState<UserRole | 'TODOS'>('TODOS')
 
@@ -98,8 +107,54 @@ export default function UsersPage() {
       })
       notify({ type: 'success', title: 'Usuario creado' })
       setModalOpen(false)
-    } catch {
-      notify({ type: 'error', title: 'No se pudo crear usuario' })
+    } catch (error) {
+      notify({
+        type: 'error',
+        title: 'No se pudo crear usuario',
+        message: getApiErrorMessage(error, 'Revisa los datos e inténtalo nuevamente.'),
+      })
+    }
+  }
+
+  /** Actualiza nombre, correo y opcionalmente contraseña. */
+  const handleUpdateCredentials = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault()
+    if (!editingUser) return
+
+    const form = new FormData(event.currentTarget)
+    const password = String(form.get('password')).trim()
+
+    try {
+      await updateCredentials.mutateAsync({
+        id: editingUser.id,
+        payload: {
+          name: String(form.get('name')),
+          email: String(form.get('email')),
+          ...(password ? { password } : {}),
+        },
+      })
+      notify({ type: 'success', title: 'Credenciales actualizadas' })
+      setEditingUser(null)
+    } catch (error) {
+      notify({
+        type: 'error',
+        title: 'No se pudo actualizar el usuario',
+        message: getApiErrorMessage(error, 'Revisa los datos e inténtalo nuevamente.'),
+      })
+    }
+  }
+
+  /** Activa o desactiva y muestra el resultado de la operación. */
+  const changeActiveState = async (user: User) => {
+    try {
+      await toggleActive.mutateAsync(user.id)
+      notify({ type: 'success', title: user.active ? 'Usuario desactivado' : 'Usuario reactivado' })
+    } catch (error) {
+      notify({
+        type: 'error',
+        title: 'No se pudo cambiar el estado',
+        message: getApiErrorMessage(error, 'Inténtalo nuevamente.'),
+      })
     }
   }
 
@@ -188,10 +243,16 @@ export default function UsersPage() {
                     <option value="BARTENDER">Bartender</option>
                   </select>
                 </label>
-                <button className="staff-action" onClick={() => toggleActive.mutate(user.id)} type="button">
-                  <Power aria-hidden="true" size={15} />
-                  {user.active ? 'Desactivar' : 'Reactivar'}
-                </button>
+                <div className="staff-actions">
+                  <button className="staff-action" onClick={() => setEditingUser(user)} type="button">
+                    <Pencil aria-hidden="true" size={15} />
+                    Editar
+                  </button>
+                  <button className="staff-action" onClick={() => changeActiveState(user)} type="button">
+                    <Power aria-hidden="true" size={15} />
+                    {user.active ? 'Desactivar' : 'Reactivar'}
+                  </button>
+                </div>
               </footer>
             </article>
           ))}
@@ -217,6 +278,43 @@ export default function UsersPage() {
             <button className="primary-button" type="submit">Crear</button>
           </div>
         </form>
+      </Modal>
+
+      <Modal
+        open={editingUser !== null}
+        title="Editar credenciales"
+        onClose={() => setEditingUser(null)}
+      >
+        {editingUser && (
+          <form className="entity-form" onSubmit={handleUpdateCredentials}>
+            <label>
+              Nombre
+              <input defaultValue={editingUser.name} name="name" required />
+            </label>
+            <label>
+              Email
+              <input defaultValue={editingUser.email} name="email" required type="email" />
+            </label>
+            <label>
+              Nueva contraseña
+              <input
+                autoComplete="new-password"
+                minLength={8}
+                name="password"
+                placeholder="Dejar vacío para conservar la actual"
+                type="password"
+              />
+            </label>
+            <div className="form-actions">
+              <button className="secondary-button" onClick={() => setEditingUser(null)} type="button">
+                Cancelar
+              </button>
+              <button className="primary-button" disabled={updateCredentials.isPending} type="submit">
+                Guardar cambios
+              </button>
+            </div>
+          </form>
+        )}
       </Modal>
     </PageLayout>
   )

@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
  
 import java.math.BigDecimal;
- 
+
+/** Ítem de una comanda con el snapshot comercial usado para calcular su subtotal. */
 @Data
 @Builder
 public class OrderItemResponse {
@@ -19,4 +20,3 @@ public class OrderItemResponse {
     private BigDecimal subtotal;        // quantity * unitPrice (calculado)
     private String notes;
 }
- 

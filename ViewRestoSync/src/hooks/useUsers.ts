@@ -1,7 +1,7 @@
 /** Hooks de React Query para gestion de usuarios y cambios de rol/estado. */
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { usersApi } from '../api/usersApi'
-import type { CreateUserRequest } from '../types/api'
+import type { CreateUserRequest, UpdateUserCredentialsRequest } from '../types/api'
 import type { UserRole } from '../types/enums'
 import { queryKeys } from './queryKeys'
 
@@ -34,6 +34,17 @@ export const useUpdateRole = () => {
 
   return useMutation({
     mutationFn: ({ id, role }: { id: number; role: UserRole }) => usersApi.updateRole(id, role),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.users.all }),
+  })
+}
+
+/** Edita credenciales administrables e invalida el listado. */
+export const useUpdateUserCredentials = () => {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: ({ id, payload }: { id: number; payload: UpdateUserCredentialsRequest }) =>
+      usersApi.updateCredentials(id, payload),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: queryKeys.users.all }),
   })
 }

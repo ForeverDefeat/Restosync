@@ -144,6 +144,13 @@ export interface UpdateUserRoleRequest {
   role: UserRole
 }
 
+/** Datos administrativos editables de un usuario existente. */
+export interface UpdateUserCredentialsRequest {
+  name: string
+  email: string
+  password?: string
+}
+
 /** Resumen ejecutivo de la jornada administrativa en la zona del negocio. */
 export interface DashboardSummary {
   businessDate: string

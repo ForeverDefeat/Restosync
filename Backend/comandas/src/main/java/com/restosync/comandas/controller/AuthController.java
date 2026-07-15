@@ -16,6 +16,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * Expone el inicio de sesión, aplica el límite de intentos por correo e IP y
+ * devuelve el JWT con el perfil del usuario autenticado.
+ */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class AuthController {
 
     @PostMapping("/login")
     @Operation(summary = "Iniciar sesion", description = "Retorna un JWT valido para el usuario autenticado")
+    /** Valida credenciales y registra éxito o fallo en el control anti-fuerza-bruta. */
     public ResponseEntity<ApiResponse<AuthResponse>> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletRequest httpRequest) {

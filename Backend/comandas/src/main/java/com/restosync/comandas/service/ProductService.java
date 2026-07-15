@@ -16,7 +16,11 @@ import org.springframework.transaction.annotation.Transactional;
  
 import java.util.List;
 import java.util.Map;
- 
+
+/**
+ * Gestiona el catálogo de productos, sus filtros, disponibilidad y datos de
+ * venta. Cada alta o cambio queda asociado al administrador en auditoría.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -28,6 +32,7 @@ public class ProductService {
  
     // ── Consultas ────────────────────────────────────────────────────────────
  
+    /** Busca productos combinando texto, categoría y disponibilidad opcionales. */
     @Transactional(readOnly = true)
     public List<ProductResponse> buscar(String search, ProductCategory category, Boolean available) {
         return productMapper.toResponseList(
@@ -35,6 +40,7 @@ public class ProductService {
         );
     }
  
+    /** Obtiene un producto por ID y lo convierte al contrato público. */
     @Transactional(readOnly = true)
     public ProductResponse buscarPorId(Long id) {
         return productMapper.toResponse(obtenerEntidad(id));
@@ -42,6 +48,7 @@ public class ProductService {
  
     // ── Creación ─────────────────────────────────────────────────────────────
  
+    /** Registra un producto nuevo y audita quién realizó el alta. */
     @Transactional
     public ProductResponse crear(CreateProductRequest request, User currentUser) {
         Product product = productMapper.toEntity(request);
@@ -60,6 +67,7 @@ public class ProductService {
  
     // ── Actualización ────────────────────────────────────────────────────────
  
+    /** Reemplaza los datos editables de un producto existente. */
     @Transactional
     public ProductResponse actualizar(Long id, CreateProductRequest request, User currentUser) {
         Product product = obtenerEntidad(id);
@@ -78,6 +86,7 @@ public class ProductService {
  
     // ── Activar / Desactivar (lógico) ────────────────────────────────────────
  
+    /** Alterna si el producto puede venderse sin eliminar su historial. */
     @Transactional
     public ProductResponse toggleDisponibilidad(Long id, User currentUser) {
         Product product = obtenerEntidad(id);
@@ -100,6 +109,7 @@ public class ProductService {
  
     // ── Utilitario interno ───────────────────────────────────────────────────
  
+    /** Recupera la entidad o informa que el producto solicitado no existe. */
     private Product obtenerEntidad(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Producto", id));

@@ -1,6 +1,6 @@
 /** Endpoints de usuarios: listado, alta, roles y activacion. */
 import { apiClient, unwrapApiResponse } from './axios'
-import type { ApiResponse, CreateUserRequest, UpdateUserRoleRequest } from '../types/api'
+import type { ApiResponse, CreateUserRequest, UpdateUserCredentialsRequest, UpdateUserRoleRequest } from '../types/api'
 import type { User } from '../types/models'
 
 /**
@@ -32,6 +32,13 @@ export const usersApi = {
   async updateRole(id: number, role: UpdateUserRoleRequest['role']) {
     const payload: UpdateUserRoleRequest = { role }
     const response = await apiClient.patch<ApiResponse<User>>(`/users/${id}/role`, payload)
+
+    return unwrapApiResponse(response)
+  },
+
+  /** Actualiza nombre, email y opcionalmente contraseña como administrador. */
+  async updateCredentials(id: number, payload: UpdateUserCredentialsRequest) {
+    const response = await apiClient.patch<ApiResponse<User>>(`/users/${id}/credentials`, payload)
 
     return unwrapApiResponse(response)
   },

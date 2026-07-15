@@ -1879,6 +1879,14 @@ td {
   cursor: pointer;
 }
 
+.staff-actions {
+  align-self: end;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
 .kds-heading {
   padding: 4px 0 2px;
 }

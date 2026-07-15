@@ -1,6 +1,6 @@
 /** Configuracion HTTP compartida: cliente Axios, JWT, errores y helpers de respuesta. */
 import axios, { AxiosError } from 'axios'
-import type { AuthResponse } from '../types/api'
+import type { AuthResponse, ErrorResponse } from '../types/api'
 
 /**
  * Centraliza la configuracion HTTP de Axios y las reglas transversales de autenticacion.
@@ -88,3 +88,12 @@ export const unwrapApiResponse = <T>(response: { data: { data?: T } }) => {
  */
 export const buildAuthorizationHeader = (auth: AuthResponse) =>
   `${auth.tokenType ?? 'Bearer'} ${auth.token}`
+
+/** Obtiene el mensaje controlado del backend sin acoplar las vistas a Axios. */
+export const getApiErrorMessage = (error: unknown, fallback: string) => {
+  if (axios.isAxiosError<ErrorResponse>(error)) {
+    return error.response?.data?.message ?? fallback
+  }
+
+  return fallback
+}

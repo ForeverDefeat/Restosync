@@ -1,6 +1,7 @@
 package com.restosync.comandas.service;
 
 import com.restosync.comandas.dto.request.CreateUserRequest;
+import com.restosync.comandas.dto.request.UpdateUserCredentialsRequest;
 import com.restosync.comandas.dto.response.UserResponse;
 import com.restosync.comandas.entity.User;
 import com.restosync.comandas.enums.UserRole;
@@ -17,7 +18,12 @@ import org.springframework.transaction.annotation.Transactional;
  
 import java.util.List;
 import java.util.Map;
- 
+
+/**
+ * Implementa la gestión administrativa de usuarios: consulta, alta, edición,
+ * roles y activación lógica. Aplica unicidad de correo, cifra contraseñas y
+ * registra en auditoría cada modificación sensible.
+ */
 @Service
 @RequiredArgsConstructor
 @Slf4j
@@ -30,13 +36,15 @@ public class UserService {
  
     // ── Consultas ────────────────────────────────────────────────────────────
  
+    /** Lista cuentas activas e inactivas para que administración pueda gestionarlas. */
     @Transactional(readOnly = true)
     public List<UserResponse> listarTodos() {
         return userMapper.toResponseList(
-                userRepository.findAllByActiveOrderByNameAsc(true)
+                userRepository.findAllByOrderByActiveDescNameAsc()
         );
     }
  
+    /** Obtiene el detalle público y seguro de una cuenta por identificador. */
     @Transactional(readOnly = true)
     public UserResponse buscarPorId(Long id) {
         return userMapper.toResponse(obtenerEntidad(id));
@@ -44,6 +52,7 @@ public class UserService {
  
     // ── Creación ─────────────────────────────────────────────────────────────
  
+    /** Crea una cuenta nueva con correo normalizado y contraseña BCrypt. */
     @Transactional
     public UserResponse crear(CreateUserRequest request, User currentUser) {
         String email = TextNormalizer.email(request.getEmail());
@@ -76,6 +85,7 @@ public class UserService {
  
     // ── Cambiar rol ──────────────────────────────────────────────────────────
  
+    /** Cambia el rol sin permitir que desaparezca el último administrador activo. */
     @Transactional
     public UserResponse actualizarRol(Long id, UserRole nuevoRol, User currentUser) {
         User user = obtenerEntidad(id);
@@ -102,9 +112,53 @@ public class UserService {
         log.info("Rol de usuario {} cambiado: {} → {}", user.getId(), rolAnterior, nuevoRol);
         return userMapper.toResponse(user);
     }
+
+    /**
+     * Actualiza nombre y correo, y reemplaza la contraseña únicamente cuando
+     * el administrador proporciona una nueva.
+     */
+    @Transactional
+    public UserResponse actualizarCredenciales(
+            Long id,
+            UpdateUserCredentialsRequest request,
+            User currentUser) {
+        User user = obtenerEntidad(id);
+        String email = TextNormalizer.email(request.getEmail());
+
+        if (userRepository.existsByEmailAndIdNot(email, id)) {
+            throw new BusinessException(
+                    "Ya existe un usuario registrado con el email: " + email
+            );
+        }
+
+        user.setName(TextNormalizer.required(request.getName()));
+        user.setEmail(email);
+
+        boolean passwordChanged = request.getPassword() != null;
+        if (passwordChanged) {
+            user.setPassword(passwordEncoder.encode(request.getPassword()));
+        }
+
+        user = userRepository.save(user);
+
+        auditService.log(
+                AuditService.USER_CREDENTIALS_UPDATED,
+                currentUser.getId(),
+                null,
+                Map.of(
+                        "targetUserId", user.getId(),
+                        "email", user.getEmail(),
+                        "passwordChanged", passwordChanged
+                )
+        );
+
+        log.info("Credenciales del usuario {} actualizadas por admin {}", user.getId(), currentUser.getId());
+        return userMapper.toResponse(user);
+    }
  
     // ── Activar / Desactivar ─────────────────────────────────────────────────
  
+    /** Alterna el acceso lógico respetando las protecciones de la cuenta administradora. */
     @Transactional
     public UserResponse toggleActivo(Long id, User currentUser) {
         User user = obtenerEntidad(id);
@@ -131,11 +185,13 @@ public class UserService {
  
     // ── Utilitario interno ───────────────────────────────────────────────────
  
+    /** Recupera la entidad interna o genera una respuesta 404 de negocio. */
     public User obtenerEntidad(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuario", id));
     }
 
+    /** Indica si modificar la cuenta eliminaría el último administrador operativo. */
     private boolean esUltimoAdminActivo(User user) {
         return user.getRole() == UserRole.ADMINISTRADOR
                 && Boolean.TRUE.equals(user.getActive())

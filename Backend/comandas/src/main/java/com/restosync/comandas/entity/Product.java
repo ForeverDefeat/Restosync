@@ -8,7 +8,11 @@ import org.hibernate.annotations.UpdateTimestamp;
  
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
- 
+
+/**
+ * Producto vendible del catálogo, con categoría operativa, precio,
+ * disponibilidad, tiempo estimado e imagen opcional.
+ */
 @Entity
 @Table(name = "products")
 @Getter
@@ -51,4 +55,3 @@ public class Product {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }
- 

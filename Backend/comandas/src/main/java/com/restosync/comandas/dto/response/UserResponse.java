@@ -5,7 +5,8 @@ import lombok.Builder;
 import lombok.Data;
  
 import java.time.LocalDateTime;
- 
+
+/** Datos seguros de una cuenta expuestos a administración, sin incluir el hash. */
 @Data
 @Builder
 public class UserResponse {
@@ -17,4 +18,3 @@ public class UserResponse {
     private Boolean active;
     private LocalDateTime createdAt;
 }
- 

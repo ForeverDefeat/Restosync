@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/** Credenciales proporcionadas por el usuario para iniciar sesión. */
 @Data
 public class LoginRequest {
 

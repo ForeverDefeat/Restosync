@@ -2,6 +2,7 @@ package com.restosync.comandas.controller;
 
 import com.restosync.comandas.dto.request.CreateUserRequest;
 import com.restosync.comandas.dto.request.UpdateUserRoleRequest;
+import com.restosync.comandas.dto.request.UpdateUserCredentialsRequest;
 import com.restosync.comandas.dto.response.ApiResponse;
 import com.restosync.comandas.dto.response.UserResponse;
 import com.restosync.comandas.security.SecurityUser;
@@ -90,5 +91,16 @@ public class UserController {
  
         UserResponse updated = userService.toggleActivo(id, principal.getUser());
         return ResponseEntity.ok(ApiResponse.ok(updated, "Estado de usuario actualizado"));
+    }
+
+    @PatchMapping("/{id}/credentials")
+    @Operation(summary = "Actualizar nombre, email y contraseña de un usuario")
+    public ResponseEntity<ApiResponse<UserResponse>> updateCredentials(
+            @PathVariable @Positive(message = "El ID del usuario debe ser mayor a cero") Long id,
+            @Valid @RequestBody UpdateUserCredentialsRequest request,
+            @AuthenticationPrincipal SecurityUser principal) {
+
+        UserResponse updated = userService.actualizarCredenciales(id, request, principal.getUser());
+        return ResponseEntity.ok(ApiResponse.ok(updated, "Credenciales actualizadas correctamente"));
     }
 }

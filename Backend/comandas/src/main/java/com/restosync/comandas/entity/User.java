@@ -7,7 +7,11 @@ import org.hibernate.annotations.CreationTimestamp;
  
 import java.time.LocalDateTime;
 import java.util.List;
- 
+
+/**
+ * Cuenta del personal con identidad, credenciales cifradas, rol y estado
+ * lógico. Conserva además las comandas atendidas cuando actúa como mesero.
+ */
 @Entity
 @Table(name = "users")
 @Getter
@@ -45,4 +49,3 @@ public class User {
     @OneToMany(mappedBy = "waiter", fetch = FetchType.LAZY)
     private List<Order> orders;
 }
- 

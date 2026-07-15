@@ -10,7 +10,11 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
- 
+
+/**
+ * Comanda persistida con su mesa, mesero, estado, total e ítems. Mantiene la
+ * relación bidireccional con los ítems y calcula el importe total del pedido.
+ */
 @Entity
 @Table(name = "orders")
 @Getter
@@ -65,16 +69,19 @@ public class Order {
  
     // ── helpers ──────────────────────────────────────────────────────────────
  
+    /** Agrega un ítem y sincroniza su referencia hacia esta comanda. */
     public void addItem(OrderItem item) {
         items.add(item);
         item.setOrder(this);
     }
  
+    /** Elimina un ítem y limpia la relación inversa. */
     public void removeItem(OrderItem item) {
         items.remove(item);
         item.setOrder(null);
     }
  
+    /** Recalcula el total a partir del precio y cantidad almacenados en cada ítem. */
     public void recalculateTotal() {
         this.total = items.stream()
                 .map(i -> i.getUnitPrice().multiply(BigDecimal.valueOf(i.getQuantity())))

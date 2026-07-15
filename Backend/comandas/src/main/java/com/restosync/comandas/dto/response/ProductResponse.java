@@ -6,7 +6,8 @@ import lombok.Data;
  
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
- 
+
+/** Representación pública de un producto del catálogo y su disponibilidad. */
 @Data
 @Builder
 public class ProductResponse {
@@ -21,4 +22,3 @@ public class ProductResponse {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
- 

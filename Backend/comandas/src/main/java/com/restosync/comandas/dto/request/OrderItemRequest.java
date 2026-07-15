@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/** Producto, cantidad y notas enviados al crear o editar una comanda. */
 @Data
 public class OrderItemRequest {
 

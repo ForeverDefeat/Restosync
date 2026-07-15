@@ -7,6 +7,7 @@ import lombok.Data;
 
 import java.util.List;
 
+/** Lista completa de ítems que reemplazará el contenido editable de una comanda. */
 @Data
 public class EditOrderItemsRequest {
 

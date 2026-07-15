@@ -8,6 +8,7 @@ import lombok.Data;
 
 import java.util.List;
 
+/** Mesa o caja e ítems necesarios para registrar una nueva comanda. */
 @Data
 public class CreateOrderRequest {
 

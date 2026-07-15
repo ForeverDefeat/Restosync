@@ -5,7 +5,8 @@ import jakarta.validation.constraints.*;
 import lombok.Data;
  
 import java.math.BigDecimal;
- 
+
+/** Datos comerciales y operativos usados al crear o actualizar un producto. */
 @Data
 public class CreateProductRequest {
  
@@ -32,4 +33,3 @@ public class CreateProductRequest {
     @Size(max = 500, message = "La URL de imagen no puede superar 500 caracteres")
     private String imageUrl;
 }
- 

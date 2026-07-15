@@ -4,6 +4,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
 
+/** Motivo obligatorio registrado al cancelar una comanda. */
 @Data
 public class CancelOrderRequest {
 
